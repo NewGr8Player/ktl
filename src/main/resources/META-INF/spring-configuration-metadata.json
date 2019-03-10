@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "sync.query",
+      "type": "com.xavier.ktl.bean.QuerySql",
+      "defaultValue": "",
+      "description": "Sync-sql bean."
+    },
+    {
+      "sourceType": "com.xavier.es.config.ESConfig",
+      "name": "sync.elasticsearch",
+      "type": "java.util.Map<java.lang.String,java.lang.Object>",
+      "description": "Sync elasticsearch config."
+    }
+  ]
+}
