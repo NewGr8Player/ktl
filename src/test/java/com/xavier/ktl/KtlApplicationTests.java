@@ -1,16 +1,15 @@
 package com.xavier.ktl;
 
-import com.alibaba.fastjson.JSON;
-import com.xavier.ktl.bean.QuerySql;
+import com.xavier.es.util.ElasticsearchUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
-import springfox.documentation.spring.web.json.Json;
 
-import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,10 +45,11 @@ public class KtlApplicationTests {
 		stateChangeThreadOffset200.run();
 	}
 
-	@Autowired
-	private QuerySql querySql;
-
 	@Test
-	public void configTest(){
+	public void configTest() throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("time", new Date());
+		map.put("test", "fd4s65af4d5sfa65");
+		ElasticsearchUtil.addData(map, "pt_petition_high_level_reduce", "pt_petition_high_level_reduce");
 	}
 }

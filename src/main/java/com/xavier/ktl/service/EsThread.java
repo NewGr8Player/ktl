@@ -1,9 +1,10 @@
 package com.xavier.ktl.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xavier.es.util.ElasticsearchUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.DateUtils;
+import springfox.documentation.spring.web.json.Json;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -197,14 +198,9 @@ public class EsThread {
 						e -> {
 							String reduceId = e.get("petition_case_id") + "_" + e.get("id");
 							try {
-								for(String key : e.keySet()){
-									if(key.contains("_date")){
-										e.put(key,(Date)e.get(key));
-									}
-								}
-								log.debug(JSONObject.toJSONString(e));
-								ElasticsearchUtil.updateDataById(JSONObject.parseObject(JSON.toJSONString(e)), reduceTableName, reduceTypeName, reduceId);
-							} catch (IOException e1) {
+								log.debug(JSONObject.toJSONStringWithDateFormat(e,"yyyy-MM-dd"));
+								ElasticsearchUtil.updateDataById((JSONObject)JSONObject.parse(JSONObject.toJSONStringWithDateFormat(e,"yyyy-MM-dd")), reduceTableName, reduceTypeName, reduceId);
+							} catch (Exception e1) {
 								e1.printStackTrace();
 								log.error(reduceId);
 							}

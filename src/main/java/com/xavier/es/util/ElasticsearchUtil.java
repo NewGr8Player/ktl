@@ -2,7 +2,6 @@ package com.xavier.es.util;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -122,13 +121,13 @@ public class ElasticsearchUtil {
 	/**
 	 * 数据添加，正定ID
 	 *
-	 * @param jsonObject 要增加的数据
+	 * @param map 要增加的数据
 	 * @param index  索引，类似数据库
 	 * @param type       类型，类似表
 	 * @param id         数据ID
 	 * @return
 	 */
-	public static String addData(JSONObject jsonObject, String index, String type, String id) throws Exception {
+	public static String addData(Map map, String index, String type, String id) throws Exception {
 		if (!isIndexExist(index)) {
 			createIndex(index);
 		}
@@ -136,7 +135,7 @@ public class ElasticsearchUtil {
 			id = uuid();
 			log.warn("【插入数据】未传入Id，重新生成Id:{}", id);
 		}
-		IndexRequest indexRequest = new IndexRequest(index, type, id).source(jsonObject, XContentType.JSON);
+		IndexRequest indexRequest = new IndexRequest(index, type, id).source(map, XContentType.JSON);
 		IndexResponse ret = client.index(indexRequest, RequestOptions.DEFAULT);
 		log.info("【插入数据】Index:{},Type:{},Id:{},Result:{}", index, type, ret.getId(), ret.getResult());
 		return ret.getId();
@@ -145,13 +144,13 @@ public class ElasticsearchUtil {
 	/**
 	 * 数据添加
 	 *
-	 * @param jsonObject 要增加的数据
+	 * @param map 要增加的数据
 	 * @param index      索引，类似数据库
 	 * @param type       类型，类似表
 	 * @return
 	 */
-	public static String addData(JSONObject jsonObject, String index, String type) throws Exception {
-		return addData(jsonObject, index, type, uuid());
+	public static String addData(Map map, String index, String type) throws Exception {
+		return addData(map, index, type, uuid());
 	}
 
 	/**
@@ -174,19 +173,19 @@ public class ElasticsearchUtil {
 	/**
 	 * 通过ID 更新数据
 	 *
-	 * @param jsonObject 要增加的数据
+	 * @param map 要增加的数据
 	 * @param index  索引，类似数据库
 	 * @param type       类型，类似表
 	 * @param id         数据ID
 	 * @return
 	 */
-	public static void updateDataById(JSONObject jsonObject, String index, String type, String id) throws IOException {
+	public static void updateDataById(Map map, String index, String type, String id) throws IOException {
 		if (!isIndexExist(index)) {
 			createIndex(index);
 		}
 		UpdateRequest updateRequest = new UpdateRequest(index, type, id)
-				.doc(jsonObject)
-				.upsert(jsonObject);/* 如果没找到就插入一条新数据 */
+				.doc(map)
+				.upsert(map);/* 如果没找到就插入一条新数据 */
 		UpdateResponse ret = client.update(updateRequest, RequestOptions.DEFAULT);
 		log.info("【更新数据】Index:{},Type:{},Id:{},Result:{}", index, type, id, ret.getResult());
 	}
@@ -380,7 +379,7 @@ public class ElasticsearchUtil {
 						, "asc".equals(fieldInfo.get("sort")) ? SortOrder.ASC : SortOrder.DESC);
 			}
 		}
-		log.trace("【查询条件】Json:{}", JSONObject.toJSONString(searchSourceBuilder));
+		log.trace("【查询条件】Json:{}", JSON.toJSONString(searchSourceBuilder));
 
 		return searchSourceBuilder;
 	}
